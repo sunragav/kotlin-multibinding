@@ -1,7 +1,10 @@
 import dagger.Component
+import dagger.MapKey
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.ElementsIntoSet
+import dagger.multibindings.IntoMap
+import dagger.multibindings.StringKey
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -26,13 +29,18 @@ class MainClass {
     @Inject
     lateinit var decorators: Set<@JvmSuppressWildcards IDecorator>
 
+    @Inject
+    lateinit var decoratorsMap: Map<String, @JvmSuppressWildcards IDecorator>
+
     init {
         DaggerAppComponent.create().inject(this)
     }
 
     fun present(): String {
         var a = ""
-        decorators.forEach { a = "$a ${it.decorate()}" }
+        decorators.forEach { a = "$a${it.decorate()}" }
+        a+="\n"
+        decoratorsMap.forEach{a="$a ${it.key} -> ${it.value}\n"}
         return a
     }
 }
@@ -71,6 +79,25 @@ object AppModule {
         ByeDecorator(InfoModule.getInfo(str2)),
         NamasteDecorator(InfoModule.getInfo(str3))
     )
+
+    @Provides
+    @JvmStatic
+    @IntoMap
+    @StringKey("HiDecorator")
+    fun getHiDec(@InfoStr1 str1: String):IDecorator =
+        HiDecorator(InfoModule.getInfo(str1))
+
+    @Provides
+    @JvmStatic
+    @IntoMap
+    @StringKey("ByeDecorator")
+    fun getByeDec(@InfoStr2 str2: String):IDecorator= ByeDecorator(InfoModule.getInfo(str2))
+
+    @Provides
+    @JvmStatic
+    @IntoMap
+    @StringKey("NamasteDecorator")
+    fun getNamasteDec(@InfoStr3 str3: String):IDecorator = NamasteDecorator(InfoModule.getInfo(str3))
 }
 
 @Module
