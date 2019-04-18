@@ -63,14 +63,13 @@ class NamasteDecorator @Inject constructor(val info: Info) : IDecorator {
 class Info @Inject constructor(val text: String)
 @Module
 object AppModule {
-
     @Provides
     @JvmStatic
     @ElementsIntoSet
-    fun getDecor2(@InfoStr2 str1: String, @InfoStr3 str2: String) = setOf(
+    fun getDecor2(@InfoStr1 str1: String, @InfoStr2 str2: String, @InfoStr3 str3: String) = setOf(
         HiDecorator(InfoModule.getInfo(str1)),
-        ByeDecorator(InfoModule.getInfo(str1)),
-        NamasteDecorator(InfoModule.getInfo(str2))
+        ByeDecorator(InfoModule.getInfo(str2)),
+        NamasteDecorator(InfoModule.getInfo(str3))
     )
 }
 
@@ -95,8 +94,6 @@ object InfoModule {
     @JvmStatic
     fun getInfo(@InfoStr1 str: String): Info = Info(str)
 }
-
-
 
 @Component(modules = [AppModule::class, InfoModule::class])
 interface AppComponent {
